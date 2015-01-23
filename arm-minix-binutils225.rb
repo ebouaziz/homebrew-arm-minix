@@ -17,23 +17,30 @@ class ArmMinixBinutils225 <Formula
   end
 
   def install
-    system "./configure", 
-                "--prefix=#{prefix}", 
-                "--target=arm-elf32-minix",
-                "--with-gmp=#{Formula.factory('gmp').prefix}",
-                "--with-mpfr=#{Formula.factory('mpfr').prefix}",
-                "--with-ppl=#{Formula.factory('ppl11').prefix}",
-                "--with-cloog=#{Formula.factory('cloog').prefix}",
-                "--disable-shared", 
-                "--disable-nls",
-                "--disable-werror", 
-                "--disable-debug",
-                "--enable-lto",
-                "--enable-plugins",
-                "--enable-ld=default",
-                "--enable-gold=yes",
-                "--with-sysroot",
-                "--with-pkgversion=SDK3-Angelina"              
+    args = %W[
+                --prefix=#{prefix}
+                --target=arm-elf32-minix
+                --with-gmp=#{Formula.factory('gmp').prefix}
+                --with-mpfr=#{Formula.factory('mpfr').prefix}
+                --with-ppl=#{Formula.factory('ppl11').prefix}
+                --with-cloog=#{Formula.factory('cloog').prefix}
+                --disable-nls
+                --disable-werror
+                --disable-debug
+                --enable-static
+                --enable-lto
+                --enable-plugins
+                --enable-ld=default
+                --enable-gold=yes
+                --with-sysroot
+                --with-pkgversion=SDK3-Angelina
+            ]
+    if OS.linux?
+        args << "--disable-shared"
+        args << "--build=x86_64-linux-gnu"
+        args << "--host=x86_64-linux-gnu"
+    end
+    system "./configure", *args
     system "make"
     system "make install"
   end

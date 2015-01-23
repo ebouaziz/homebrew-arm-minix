@@ -57,22 +57,39 @@ class ArmMinixClang35 <Formula
     cloog_prefix = install_prefix/'libexec/cloog'
 
     resource('isl').stage do
-      system "./configure", "--disable-dependency-tracking",
-                            "--disable-silent-rules",
-                            "--prefix=#{isl_prefix}",
-                            "--with-gmp=system",
-                            "--with-gmp-prefix=#{gmp_prefix}"
+      args = %W[
+        --disable-dependency-tracking
+        --disable-silent-rules
+        --prefix=#{isl_prefix}
+        --with-gmp=system
+        --with-gmp-prefix=#{gmp_prefix}
+        ]
+      if OS.linux?
+        args << "--disable-shared"
+        args << "--host=core2-unknown-linux-gnu"
+        args << "--build=core2-unknown-linux-gnu"
+      end
+      system "./configure", *args
+
       system "make"
       system "make", "install"
     end
 
     resource('cloog').stage do
+      args = %W[
+        --disable-dependency-tracking
+        --disable-silent-rules
+        --prefix=#{cloog_prefix}
+        --with-gmp-prefix=#{gmp_prefix}
+        --with-isl-prefix=#{isl_prefix}
+        ]
+      if OS.linux?
+        args << "--disable-shared"
+        args << "--host=core2-unknown-linux-gnu"
+        args << "--build=core2-unknown-linux-gnu"
+      end
       system "./autogen.sh"
-      system "./configure", "--disable-dependency-tracking",
-                            "--disable-silent-rules",
-                            "--prefix=#{cloog_prefix}",
-                            "--with-gmp-prefix=#{gmp_prefix}",
-                            "--with-isl-prefix=#{isl_prefix}"
+      system "./configure", *args
       system "make"
       system "make", "install"
     end
@@ -92,6 +109,11 @@ class ArmMinixClang35 <Formula
 
     args << "--enable-libffi" if build.with? 'libffi'
 
+    if OS.linux?
+        args << "--disable-shared"
+        args << "--build=x86_64-linux-gnu"
+        args << "--host=x86_64-linux-gnu"
+    end
     system './configure', *args
 
     # crappy way to patch resource files.
