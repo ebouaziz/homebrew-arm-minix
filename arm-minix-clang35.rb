@@ -111,8 +111,8 @@ class ArmMinixClang35 <Formula
 
     if OS.linux?
         args << "--disable-shared"
-        args << "--build=x86_64-linux-gnu"
-        args << "--host=x86_64-linux-gnu"
+        args << "--build=core2-unknown-linux-gnu"
+        args << "--host=core2-unknown-linux-gnu"
     end
     system './configure', *args
 
