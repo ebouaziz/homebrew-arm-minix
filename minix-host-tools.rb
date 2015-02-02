@@ -1,6 +1,10 @@
 class MinixHostTools < Formula
   homepage "https://github.com/eblot/minix-host-tools"
-  url "https://github.com/eblot/minix-host-tools.git", :branch => "master"
+  if OS.linux?
+    url "https://github.com/ebouaziz/minix-host-tools.git", :branch => "x64-debian7"
+  else
+    url "https://github.com/ebouaziz/minix-host-tools.git", :branch => "master"
+  end
 
   depends_on "cmake" => :build
 
